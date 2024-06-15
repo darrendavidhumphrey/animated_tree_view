@@ -104,9 +104,9 @@ class ExpandableNodeItem<Data, Tree extends ITreeNode<Data>>
       onTap: remove
           ? null
           : (dynamic item) {
-              if (toggleExpansionOnTap) {
+              //if (toggleExpansionOnTap) {
                 onToggleExpansion(item);
-              }
+             //}
               if (onItemTap != null) onItemTap!(item);
             },
     );
@@ -147,16 +147,16 @@ class ExpandableNodeContainer<T> extends StatelessWidget {
     return SizeTransition(
       axis: Axis.vertical,
       sizeFactor: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: onTap == null ? null : () => onTap!(node),
-        child: Indent(
+      child: Indent(
           indentation: indentation,
           node: node,
           minLevelToIndent: minLevelToIndent,
           child: expansionIndicator == null
               ? child
-              : PositionedExpansionIndicator(
+              : GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: onTap == null ? null : () => onTap!(node),
+            child: PositionedExpansionIndicator(
                   expansionIndicator: expansionIndicator!,
                   child: child,
                 ),
