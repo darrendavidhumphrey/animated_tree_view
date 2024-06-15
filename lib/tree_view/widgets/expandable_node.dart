@@ -101,12 +101,19 @@ class ExpandableNodeItem<Data, Tree extends ITreeNode<Data>>
       expansionIndicator: node.childrenAsList.isEmpty
           ? null
           : expansionIndicatorBuilder?.call(context, node),
+      onLongPress:remove
+          ? null
+          : (dynamic item) {
+          onToggleExpansion(item);
+        if (onItemTap != null) onItemTap!(item);
+      },
+
       onTap: remove
           ? null
           : (dynamic item) {
-              //if (toggleExpansionOnTap) {
+              if (toggleExpansionOnTap) {
                 onToggleExpansion(item);
-             //}
+              }
               if (onItemTap != null) onItemTap!(item);
             },
     );
@@ -125,6 +132,7 @@ class ExpandableNodeItem<Data, Tree extends ITreeNode<Data>>
 class ExpandableNodeContainer<T> extends StatelessWidget {
   final Animation<double> animation;
   final ValueSetter<ITreeNode<T>>? onTap;
+  final ValueSetter<ITreeNode<T>>? onLongPress;
   final ITreeNode<T> node;
   final ExpansionIndicator? expansionIndicator;
   final Indentation indentation;
@@ -135,6 +143,7 @@ class ExpandableNodeContainer<T> extends StatelessWidget {
     super.key,
     required this.animation,
     required this.onTap,
+    required this.onLongPress,
     required this.child,
     required this.node,
     required this.indentation,
@@ -147,16 +156,17 @@ class ExpandableNodeContainer<T> extends StatelessWidget {
     return SizeTransition(
       axis: Axis.vertical,
       sizeFactor: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-      child: Indent(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onLongPress: onTap == null ? null : () => onTap!(node),
+        onTap: onTap == null ? null : () => onTap!(node),
+        child: Indent(
           indentation: indentation,
           node: node,
           minLevelToIndent: minLevelToIndent,
           child: expansionIndicator == null
               ? child
-              : GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: onTap == null ? null : () => onTap!(node),
-            child: PositionedExpansionIndicator(
+              : PositionedExpansionIndicator(
                   expansionIndicator: expansionIndicator!,
                   child: child,
                 ),
