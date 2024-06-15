@@ -15,6 +15,8 @@ class ExpandableNodeItem<Data, Tree extends ITreeNode<Data>>
   final ValueSetter<Tree> onToggleExpansion;
   final bool showRootNode;
 
+  final bool toggleExpansionOnTap = false;
+
   static Widget insertedNode<Data, Tree extends ITreeNode<Data>>({
     required int index,
     required Tree node,
@@ -102,7 +104,9 @@ class ExpandableNodeItem<Data, Tree extends ITreeNode<Data>>
       onTap: remove
           ? null
           : (dynamic item) {
-              onToggleExpansion(item);
+              if (toggleExpansionOnTap) {
+                onToggleExpansion(item);
+              }
               if (onItemTap != null) onItemTap!(item);
             },
     );
